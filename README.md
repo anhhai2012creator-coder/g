@@ -1,4 +1,4 @@
-<!doctype html>
+[<!doctype html>
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
@@ -93,7 +93,7 @@
 
     input, button, select {
       width: 100%;
-      border: 1px solid var(--border);
+](https://anhhai2012creator-coder.github.io/g/)      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 11px 12px;
       font: inherit;
