@@ -1,13 +1,829 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pokemon Odyssey Peer Battle | No Firebase</title>
-  <meta name="description" content="Pokemon Odyssey Peer Battle - game Pokemon online 1v1 dùng PeerJS, không cần Firebase, chạy trên GitHub Pages." />
-  <meta name="theme-color" content="#2563eb" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tiến Lên Online PeerJS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js"></script>
   <style>
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;color:#f8fafc;background:radial-gradient(circle at 15% 10%,#ffffff30,transparent 20%),radial-gradient(circle at 85% 0,#facc1530,transparent 18%),linear-gradient(135deg,#020617,#1d4ed8 48%,#16a34a);overflow-x:hidden}.app{max-width:1320px;margin:0 auto;padding:18px}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.card{background:#ffffff18;border:1px solid #ffffff2d;border-radius:26px;padding:16px;box-shadow:0 20px 55px #0005;backdrop-filter:blur(18px)}h1{font-size:clamp(34px,5vw,64px);line-height:.95;margin:0 0 10px;letter-spacing:-2px}h2,h3{margin:0 0 12px}.muted{color:#dbeafe}.tabs,.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.tabs{margin:14px 0}.tab{border:1px solid #ffffff2d;background:#ffffff18;color:white;padding:11px 14px;border-radius:16px;font-weight:900;cursor:pointer;transition:.15s}.tab:hover,.tab.active{background:#ffffff33;transform:translateY(-1px)}button,input{font:inherit}button{border:none;border-radius:15px;padding:10px 13px;font-weight:900;cursor:pointer;transition:.15s;background:linear-gradient(135deg,#fef08a,#facc15);color:#111827;box-shadow:0 10px 22px #0003}button:hover{transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn-blue{background:linear-gradient(135deg,#dbeafe,#60a5fa);color:#082f49}.btn-green{background:linear-gradient(135deg,#bbf7d0,#4ade80);color:#052e16}.btn-red{background:linear-gradient(135deg,#fecdd3,#fb7185);color:#3b0712}.btn-purple{background:linear-gradient(135deg,#ede9fe,#a78bfa);color:#2e1065}.ghost{background:#ffffff18;color:white;border:1px solid #ffffff2d;box-shadow:none}input{border:1px solid #ffffff2d;background:#00000025;color:white;border-radius:14px;padding:11px 12px;outline:none;min-width:210px}input::placeholder{color:#cbd5e1}.pane{display:none}.pane.active{display:block}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stat{background:#00000030;border:1px solid #ffffff24;border-radius:999px;padding:9px 12px;font-weight:900}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:6px}.dot.ok{background:#22c55e}.mini{background:#00000022;border:1px solid #ffffff24;border-radius:18px;padding:12px}.list{display:grid;gap:10px}.pokemon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.mon{background:#ffffff14;border:1px solid #ffffff24;border-radius:20px;padding:12px;text-align:center;cursor:pointer;transition:.15s}.mon:hover,.mon.active{background:#ffffff30;transform:translateY(-1px)}.mon img{width:92px;height:92px;object-fit:contain;filter:drop-shadow(0 12px 12px #0005)}.type{display:inline-block;background:#0000003a;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:900;margin:2px}.battle-scene{position:relative;min-height:360px;border-radius:24px;overflow:hidden;border:1px solid #ffffff2d;background:linear-gradient(180deg,#93c5fd,#22c55e 60%,#14532d)}.battle-scene::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 16%,#ffffffcc 0 6%,transparent 7%),linear-gradient(transparent 62%,#00000025 63%)}.poke{position:absolute;z-index:3;width:170px;height:170px;object-fit:contain;filter:drop-shadow(0 18px 18px #0007)}.poke.me{left:50px;bottom:48px;transform:scaleX(-1)}.poke.foe{right:50px;bottom:108px}.shadow{position:absolute;width:210px;height:58px;border-radius:50%;background:radial-gradient(ellipse,#ffffff55,#00000025);bottom:34px}.shadow.left{left:38px}.shadow.right{right:38px;bottom:94px}.bar{height:13px;background:#00000045;border-radius:999px;overflow:hidden;margin:7px 0}.bar span{display:block;height:100%;border-radius:999px;transition:width:.3s}.hp{background:linear-gradient(90deg,#22c55e,#facc15,#ef4444)}.en{background:linear-gradient(90deg,#38bdf8,#a78bfa)}.moves{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.move{text-align:left;background:#ffffffe8;color:#0f172a}.log{height:230px;overflow:auto;background:#00000030;border:1px solid #ffffff24;border-radius:18px;padding:12px;line-height:1.45;font-size:14px}.fx{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}.particle{position:absolute;border-radius:50%;animation:fly .7s ease-out forwards}@keyframes fly{0%{opacity:1;transform:translate(0,0) scale(.5)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.35) rotate(360deg)}}.footer{text-align:center;margin-top:16px;color:#dbeafe;background:#00000030;border:1px solid #ffffff24;border-radius:22px;padding:14px}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#00000040;border:1px solid #ffffff24;border-radius:14px;padding:12px;overflow:auto;white-space:pre-wrap;color:#e0f2fe}.copy{user-select:all}.warn{background:#7f1d1d88;border:1px solid #fecdd3aa;border-radius:18px;padding:12px}.good{background:#064e3b88;border:1px solid #bbf7d0aa;border-radius:18px;padding:12px}@media(max-width:980px){.hero,.grid2,.grid3{grid-template-columns:1fr}.moves{grid-template-columns:1fr}.poke{width:125px;height:125px}.poke.me{left:15px}.poke.foe{right:15px}}
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --card: #f8fafc;
+      --cardText: #111827;
+      --red: #dc2626;
+      --border: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e3a8a 0, var(--bg) 46%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      margin: 0;
+      letter-spacing: -.04em;
+    }
+
+    .pill {
+      background: rgba(255,255,255,.1);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 850px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: rgba(17, 24, 39, .88);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input, button, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font: inherit;
+    }
+
+    input, select {
+      background: #020617;
+      color: var(--text);
+      outline: none;
+    }
+
+    button {
+      background: var(--accent);
+      color: #052e16;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease, filter .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .secondary { background: #38bdf8; color: #082f49; }
+    .danger { background: var(--danger); color: #450a0a; }
+    .warn { background: var(--warn); color: #451a03; }
+
+    .room-code {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      background: #020617;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      user-select: all;
+    }
+
+    .players {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .player {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .player.active { outline: 2px solid var(--accent); }
+    .player .name { font-weight: 800; }
+    .player .meta { color: var(--muted); font-size: 13px; }
+
+    .table {
+      min-height: 280px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .status {
+      background: rgba(2,6,23,.65);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .last-play {
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 112px;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .card {
+      width: 54px;
+      height: 76px;
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--cardText);
+      border: 2px solid #cbd5e1;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(0,0,0,.24);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    .card.red { color: var(--red); }
+    .card.selected {
+      transform: translateY(-16px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 26px rgba(34,197,94,.35);
+    }
+
+    .card.small {
+      width: 44px;
+      height: 62px;
+      font-size: 14px;
+      cursor: default;
+      transform: none;
+    }
+
+    .card.back {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-color: #93c5fd;
+      color: white;
+    }
+
+    .hand-wrap {
+      margin-top: 12px;
+      background: rgba(2,6,23,.5);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .controls { grid-template-columns: 1fr; }
+      .card { width: 46px; height: 66px; font-size: 14px; }
+    }
+
+    .log {
+      height: 180px;
+      overflow: auto;
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      background: #020617;
+      border-radius: 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .hidden { display: none !important; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .ok { color: #86efac; }
+    .bad { color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Tiến Lên Online</h1>
+        <div class="pill">GitHub Pages + PeerJS + mã phòng</div>
+      </div>
+      <div class="pill" id="netStatus">Chưa kết nối</div>
+    </header>
+
+    <div class="grid">
+      <aside class="panel">
+        <h2>Phòng chơi</h2>
+        <label>Tên của bạn</label>
+        <input id="nameInput" maxlength="18" placeholder="Ví dụ: Hải" />
+
+        <div class="btn-row">
+          <button id="createBtn">Tạo phòng</button>
+          <button class="secondary" id="joinBtn">Vào phòng</button>
+        </div>
+
+        <label>Mã phòng</label>
+        <input id="roomInput" maxlength="12" placeholder="Nhập mã phòng" />
+        <div class="room-code hidden" id="roomCodeBox"></div>
+
+        <p class="note">
+          Người tạo phòng bấm “Tạo phòng”, gửi mã cho bạn bè. Người khác nhập mã rồi bấm “Vào phòng”. Nên chơi 2–4 người.
+        </p>
+
+        <div class="btn-row">
+          <button class="warn" id="startBtn" disabled>Bắt đầu</button>
+          <button class="danger" id="resetBtn" disabled>Ván mới</button>
+        </div>
+
+        <h2 style="margin-top:18px">Người chơi</h2>
+        <div class="players" id="playersBox"></div>
+      </aside>
+
+      <main class="panel table">
+        <div class="status" id="statusBox">
+          Tạo phòng hoặc vào phòng để bắt đầu.
+        </div>
+
+        <section class="last-play">
+          <h2>Bài vừa đánh</h2>
+          <div id="lastPlayInfo" class="note">Chưa có lượt đánh.</div>
+          <div class="cards" id="lastCards"></div>
+        </section>
+
+        <section class="hand-wrap">
+          <h2>Bài của bạn</h2>
+          <div class="cards" id="handBox"></div>
+          <div class="controls">
+            <button id="playBtn" disabled>Đánh bài</button>
+            <button class="secondary" id="passBtn" disabled>Bỏ lượt</button>
+            <button class="warn" id="sortBtn">Sắp xếp</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Nhật ký</h2>
+          <div class="log" id="logBox"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const SUITS = ["♠", "♣", "♦", "♥"];
+    const RANKS = ["3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", "2"];
+    const SUIT_POWER = { "♠": 0, "♣": 1, "♦": 2, "♥": 3 };
+
+    let peer = null;
+    let isHost = false;
+    let roomCode = "";
+    let myId = "";
+    let myName = "";
+    let selected = new Set();
+    let connections = new Map();
+
+    let state = freshState();
+
+    function freshState() {
+      return {
+        phase: "lobby",
+        hostId: "",
+        players: [],
+        hands: {},
+        turn: 0,
+        lastPlay: null,
+        passes: [],
+        winnerIds: [],
+        log: []
+      };
+    }
+
+    function roomId(code) {
+      return "tl-" + code.trim().toUpperCase();
+    }
+
+    function makeRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      for (let i = 0; i < 5; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    }
+
+    function addLog(msg) {
+      const time = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+      state.log.unshift(`[${time}] ${msg}`);
+      state.log = state.log.slice(0, 80);
+    }
+
+    function logLocal(msg) {
+      const time = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+      state.log.unshift(`[${time}] ${msg}`);
+      render();
+    }
+
+    function normalizeName() {
+      return ($("nameInput").value || "Người chơi").trim().slice(0, 18) || "Người chơi";
+    }
+
+    function send(conn, type, payload = {}) {
+      if (conn && conn.open) conn.send({ type, payload });
+    }
+
+    function broadcast(type, payload = {}) {
+      for (const conn of connections.values()) send(conn, type, payload);
+    }
+
+    function syncAll() {
+      if (!isHost) return;
+      broadcast("state", publicState());
+      render();
+    }
+
+    function publicState() {
+      const clone = JSON.parse(JSON.stringify(state));
+      for (const p of clone.players) {
+        if (p.id !== myId) clone.hands[p.id] = Array(clone.hands[p.id]?.length || 0).fill({ back: true });
+      }
+      return clone;
+    }
+
+    function stateForPlayer(playerId) {
+      const clone = JSON.parse(JSON.stringify(state));
+      for (const p of clone.players) {
+        if (p.id !== playerId) clone.hands[p.id] = Array(clone.hands[p.id]?.length || 0).fill({ back: true });
+      }
+      return clone;
+    }
+
+    function syncTo(conn, playerId) {
+      send(conn, "state", stateForPlayer(playerId));
+    }
+
+    function createDeck() {
+      const deck = [];
+      for (const rank of RANKS) {
+        for (const suit of SUITS) {
+          deck.push({ rank, suit, id: rank + suit });
+        }
+      }
+      return deck;
+    }
+
+    function cardValue(card) {
+      return RANKS.indexOf(card.rank) * 4 + SUIT_POWER[card.suit];
+    }
+
+    function rankValue(card) {
+      return RANKS.indexOf(card.rank);
+    }
+
+    function sortCards(cards) {
+      return [...cards].sort((a, b) => cardValue(a) - cardValue(b));
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function sameRank(cards) {
+      return cards.every(c => c.rank === cards[0].rank);
+    }
+
+    function isConsecutiveRank(values) {
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] !== values[i - 1] + 1) return false;
+      }
+      return true;
+    }
+
+    function analyze(cards) {
+      cards = sortCards(cards);
+      if (!cards.length) return null;
+      const n = cards.length;
+      const ranks = cards.map(rankValue);
+      const uniqueRanks = [...new Set(ranks)];
+      const high = cards[cards.length - 1];
+
+      if (n === 1) return { type: "single", size: 1, high, power: cardValue(high) };
+      if (n === 2 && sameRank(cards)) return { type: "pair", size: 2, high, power: cardValue(high) };
+      if (n === 3 && sameRank(cards)) return { type: "triple", size: 3, high, power: cardValue(high) };
+
+      const hasTwo = ranks.includes(RANKS.indexOf("2"));
+      if (n >= 3 && uniqueRanks.length === n && !hasTwo && isConsecutiveRank(ranks)) {
+        return { type: "straight", size: n, high, power: rankValue(high) };
+      }
+
+      if (n % 2 === 0 && n >= 6 && !hasTwo) {
+        const pairs = [];
+        for (let i = 0; i < n; i += 2) {
+          if (cards[i].rank !== cards[i + 1].rank) return null;
+          pairs.push(rankValue(cards[i]));
+        }
+        if (isConsecutiveRank(pairs)) {
+          return { type: "pairStraight", size: n, pairs: n / 2, high, power: rankValue(high) };
+        }
+      }
+
+      if (n === 4 && sameRank(cards)) return { type: "four", size: 4, high, power: rankValue(high) };
+      return null;
+    }
+
+    function canBeat(play, last) {
+      if (!last) return true;
+      if (play.type === last.type && play.size === last.size) return play.power > last.power;
+
+      // Luật chặt đơn giản kiểu miền Nam:
+      // Tứ quý chặt 1 lá 2 hoặc đôi 2. Ba đôi thông chặt 1 lá 2.
+      if (play.type === "four" && last.type === "single" && last.high.rank === "2") return true;
+      if (play.type === "four" && last.type === "pair" && last.high.rank === "2") return true;
+      if (play.type === "pairStraight" && play.pairs >= 3 && last.type === "single" && last.high.rank === "2") return true;
+      if (play.type === "pairStraight" && last.type === "pairStraight" && play.pairs === last.pairs) return play.power > last.power;
+      return false;
+    }
+
+    function currentPlayer() {
+      return state.players[state.turn];
+    }
+
+    function alivePlayers() {
+      return state.players.filter(p => !state.winnerIds.includes(p.id));
+    }
+
+    function advanceTurn() {
+      const alive = alivePlayers();
+      if (alive.length <= 1) return;
+      for (let i = 1; i <= state.players.length; i++) {
+        const next = (state.turn + i) % state.players.length;
+        const p = state.players[next];
+        if (!state.winnerIds.includes(p.id)) {
+          state.turn = next;
+          return;
+        }
+      }
+    }
+
+    function resetRoundIfNeeded() {
+      const alive = alivePlayers();
+      if (!state.lastPlay) return;
+      const activeIds = alive.map(p => p.id);
+      const passedCount = state.passes.filter(id => activeIds.includes(id) && id !== state.lastPlay.playerId).length;
+      if (passedCount >= Math.max(0, alive.length - 1)) {
+        const leadIndex = state.players.findIndex(p => p.id === state.lastPlay.playerId && !state.winnerIds.includes(p.id));
+        state.turn = leadIndex >= 0 ? leadIndex : state.turn;
+        state.lastPlay = null;
+        state.passes = [];
+        addLog("Vòng mới: người thắng lượt trước được đánh bất kỳ.");
+      }
+    }
+
+    function hostStartGame() {
+      if (!isHost) return;
+      if (state.players.length < 2) return alert("Cần ít nhất 2 người chơi.");
+      state.phase = "playing";
+      state.hands = {};
+      state.lastPlay = null;
+      state.passes = [];
+      state.winnerIds = [];
+
+      const deck = shuffle(createDeck());
+      state.players.forEach(p => state.hands[p.id] = []);
+      deck.forEach((card, i) => {
+        const p = state.players[i % state.players.length];
+        state.hands[p.id].push(card);
+      });
+      for (const p of state.players) state.hands[p.id] = sortCards(state.hands[p.id]);
+
+      let firstId = state.players[0].id;
+      for (const p of state.players) {
+        if (state.hands[p.id].some(c => c.rank === "3" && c.suit === "♠")) firstId = p.id;
+      }
+      state.turn = state.players.findIndex(p => p.id === firstId);
+      addLog("Bắt đầu ván. Người có 3♠ đi trước.");
+      syncAllPerPlayer();
+    }
+
+    function syncAllPerPlayer() {
+      if (!isHost) return;
+      for (const [pid, conn] of connections.entries()) syncTo(conn, pid);
+      render();
+    }
+
+    function hostPlay(playerId, cardIds) {
+      if (!isHost || state.phase !== "playing") return;
+      const player = currentPlayer();
+      if (!player || player.id !== playerId) return syncAllPerPlayer();
+
+      const hand = state.hands[playerId] || [];
+      const chosen = hand.filter(c => cardIds.includes(c.id));
+      if (chosen.length !== cardIds.length) return;
+
+      const play = analyze(chosen);
+      if (!play) return reject(playerId, "Bộ bài không hợp lệ.");
+      if (!canBeat(play, state.lastPlay)) return reject(playerId, "Bài chưa đủ lớn để đè lượt trước.");
+
+      state.hands[playerId] = hand.filter(c => !cardIds.includes(c.id));
+      state.lastPlay = { ...play, cards: chosen, playerId, playerName: player.name };
+      state.passes = [];
+      addLog(`${player.name} đánh ${chosen.map(cardLabel).join(" ")}.`);
+
+      if (state.hands[playerId].length === 0 && !state.winnerIds.includes(playerId)) {
+        state.winnerIds.push(playerId);
+        addLog(`${player.name} đã hết bài!`);
+      }
+
+      const alive = alivePlayers();
+      if (alive.length <= 1) {
+        if (alive[0] && !state.winnerIds.includes(alive[0].id)) state.winnerIds.push(alive[0].id);
+        state.phase = "ended";
+        addLog("Ván đấu kết thúc.");
+      } else {
+        advanceTurn();
+      }
+      syncAllPerPlayer();
+    }
+
+    function hostPass(playerId) {
+      if (!isHost || state.phase !== "playing") return;
+      const player = currentPlayer();
+      if (!player || player.id !== playerId) return syncAllPerPlayer();
+      if (!state.lastPlay) return reject(playerId, "Đầu vòng không được bỏ lượt.");
+      if (!state.passes.includes(playerId)) state.passes.push(playerId);
+      addLog(`${player.name} bỏ lượt.`);
+      advanceTurn();
+      resetRoundIfNeeded();
+      syncAllPerPlayer();
+    }
+
+    function reject(playerId, reason) {
+      if (playerId === myId) alert(reason);
+      else send(connections.get(playerId), "reject", { reason });
+    }
+
+    function cardLabel(c) {
+      return c.back ? "🂠" : `${c.rank}${c.suit}`;
+    }
+
+    function setupConn(conn) {
+      conn.on("open", () => {
+        connections.set(conn.peer, conn);
+      });
+      conn.on("data", msg => handleMessage(conn, msg));
+      conn.on("close", () => {
+        connections.delete(conn.peer);
+        if (isHost) {
+          const p = state.players.find(x => x.id === conn.peer);
+          if (p) addLog(`${p.name} mất kết nối.`);
+          syncAllPerPlayer();
+        }
+      });
+    }
+
+    function handleMessage(conn, msg) {
+      if (!msg || !msg.type) return;
+      const { type, payload } = msg;
+
+      if (isHost) {
+        if (type === "join") {
+          if (state.phase !== "lobby") return send(conn, "reject", { reason: "Phòng đã bắt đầu ván." });
+          if (state.players.length >= 4) return send(conn, "reject", { reason: "Phòng đã đủ 4 người." });
+          if (!state.players.some(p => p.id === conn.peer)) {
+            state.players.push({ id: conn.peer, name: payload.name || "Người chơi" });
+            addLog(`${payload.name || "Người chơi"} vào phòng.`);
+          }
+          syncAllPerPlayer();
+        }
+        if (type === "play") hostPlay(conn.peer, payload.cardIds || []);
+        if (type === "pass") hostPass(conn.peer);
+        if (type === "chatlog") addLog(payload.text || "");
+        return;
+      }
+
+      if (type === "state") {
+        state = payload;
+        selected.clear();
+        render();
+      }
+      if (type === "reject") alert(payload.reason || "Yêu cầu bị từ chối.");
+    }
+
+    function render() {
+      $("netStatus").textContent = peer ? `Peer: ${myId || "đang mở..."}` : "Chưa kết nối";
+      $("roomCodeBox").classList.toggle("hidden", !roomCode);
+      $("roomCodeBox").textContent = roomCode;
+      $("startBtn").disabled = !(isHost && state.phase === "lobby" && state.players.length >= 2);
+      $("resetBtn").disabled = !isHost;
+
+      const playersBox = $("playersBox");
+      playersBox.innerHTML = "";
+      for (const p of state.players) {
+        const div = document.createElement("div");
+        div.className = "player" + (currentPlayer()?.id === p.id ? " active" : "");
+        const order = state.winnerIds.indexOf(p.id);
+        div.innerHTML = `<div><div class="name">${escapeHtml(p.name)}${p.id === myId ? " (Bạn)" : ""}</div><div class="meta">${order >= 0 ? "Về thứ " + (order + 1) : "Đang chơi"}</div></div><div>${(state.hands[p.id] || []).length} lá</div>`;
+        playersBox.appendChild(div);
+      }
+
+      const active = currentPlayer();
+      const winners = state.winnerIds.map(id => state.players.find(p => p.id === id)?.name).filter(Boolean);
+      $("statusBox").innerHTML = statusText(active, winners);
+
+      const lastCards = $("lastCards");
+      lastCards.innerHTML = "";
+      if (state.lastPlay) {
+        $("lastPlayInfo").textContent = `${state.lastPlay.playerName} vừa đánh.`;
+        for (const c of state.lastPlay.cards) lastCards.appendChild(cardEl(c, false, true));
+      } else {
+        $("lastPlayInfo").textContent = state.phase === "playing" ? "Đầu vòng: có thể đánh bất kỳ bộ hợp lệ." : "Chưa có lượt đánh.";
+      }
+
+      const handBox = $("handBox");
+      handBox.innerHTML = "";
+      const myHand = sortCards(state.hands[myId] || []);
+      for (const c of myHand) handBox.appendChild(cardEl(c, true));
+
+      const myTurn = state.phase === "playing" && active?.id === myId;
+      $("playBtn").disabled = !myTurn || selected.size === 0;
+      $("passBtn").disabled = !myTurn || !state.lastPlay;
+
+      $("logBox").innerHTML = state.log.map(x => `<div>${escapeHtml(x)}</div>`).join("");
+    }
+
+    function statusText(active, winners) {
+      if (state.phase === "lobby") return `Đang chờ người chơi. Chủ phòng bấm <b>Bắt đầu</b> khi đủ người.`;
+      if (state.phase === "ended") return `<b class="ok">Ván kết thúc.</b><br>Kết quả: ${winners.map(escapeHtml).join(" → ") || "chưa có"}.`;
+      const turnName = active ? escapeHtml(active.name) : "?";
+      const yourTurn = active?.id === myId ? "<b class='ok'>Đến lượt bạn.</b>" : `Đến lượt <b>${turnName}</b>.`;
+      return `${yourTurn}<br>Chọn bài rồi bấm <b>Đánh bài</b>. Bộ hỗ trợ: lẻ, đôi, sám, sảnh, ba đôi thông trở lên, tứ quý.`;
+    }
+
+    function cardEl(c, clickable, small = false) {
+      const div = document.createElement("div");
+      div.className = "card" + (c.suit === "♦" || c.suit === "♥" ? " red" : "") + (selected.has(c.id) ? " selected" : "") + (small ? " small" : "") + (c.back ? " back" : "");
+      div.textContent = cardLabel(c);
+      if (clickable && !c.back) {
+        div.onclick = () => {
+          if (selected.has(c.id)) selected.delete(c.id);
+          else selected.add(c.id);
+          render();
+        };
+      }
+      return div;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]/g, s => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[s]));
+    }
+
+    function hostAddSelf() {
+      state = freshState();
+      state.hostId = myId;
+      state.players = [{ id: myId, name: myName }];
+      addLog(`${myName} tạo phòng.`);
+    }
+
+    $("createBtn").onclick = () => {
+      myName = normalizeName();
+      roomCode = makeRoomCode();
+      myId = roomId(roomCode);
+      isHost = true;
+      if (peer) peer.destroy();
+      peer = new Peer(myId, { debug: 1 });
+      peer.on("open", id => {
+        myId = id;
+        hostAddSelf();
+        render();
+      });
+      peer.on("connection", conn => setupConn(conn));
+      peer.on("error", err => {
+        alert("Không tạo được phòng. Thử lại mã khác. " + err.type);
+        console.error(err);
+      });
+    };
+
+    $("joinBtn").onclick = () => {
+      myName = normalizeName();
+      roomCode = ($("roomInput").value || "").trim().toUpperCase();
+      if (!roomCode) return alert("Nhập mã phòng trước.");
+      isHost = false;
+      if (peer) peer.destroy();
+      peer = new Peer(undefined, { debug: 1 });
+      peer.on("open", id => {
+        myId = id;
+        const conn = peer.connect(roomId(roomCode), { reliable: true });
+        setupConn(conn);
+        conn.on("open", () => send(conn, "join", { name: myName }));
+        render();
+      });
+      peer.on("error", err => {
+        alert("Không kết nối được phòng. Kiểm tra mã hoặc thử tải lại trang. " + err.type);
+        console.error(err);
+      });
+    };
+
+    $("startBtn").onclick = hostStartGame;
+    $("resetBtn").onclick = () => {
+      if (!isHost) return;
+      hostStartGame();
+    };
+
+    $("playBtn").onclick = () => {
+      const ids = [...selected];
+      if (isHost) hostPlay(myId, ids);
+      else {
+        const hostConn = [...connections.values()][0];
+        send(hostConn, "play", { cardIds: ids });
+      }
+      selected.clear();
+      render();
+    };
+
+    $("passBtn").onclick = () => {
+      if (isHost) hostPass(myId);
+      else {
+        const hostConn = [...connections.values()][0];
+        send(hostConn, "pass", {});
+      }
+    };
+
+    $("sortBtn").onclick = () => {
+      if (state.hands[myId]) state.hands[myId] = sortCards(state.hands[myId]);
+      render();
+    };
+
+    render();
+  </script>
+</body>
+</html>
   </style>
 </head>
 <body>
