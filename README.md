@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tiến Lên Online PeerJS - Bản kiểm tra lần 1</title>
+  <title>Tiến Lên Online PeerJS - Bản kiểm tra lần 2</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js"></script>
   <style>
     :root {
@@ -76,6 +76,980 @@
       display: grid;
       grid-template-columns: 330px 1fr;
       gap: 14px;
+    }
+
+    @media (max-width: 850px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: rgba(17, 24, 39, .88);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font: inherit;
+    }
+
+    input {
+      background: #020617;
+      color: var(--text);
+      outline: none;
+    }
+
+    button {
+      background: var(--accent);
+      color: #052e16;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease, filter .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .secondary { background: #38bdf8; color: #082f49; }
+    .danger { background: var(--danger); color: #450a0a; }
+    .warn { background: var(--warn); color: #451a03; }
+
+    .room-code {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      background: #020617;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      user-select: all;
+      margin-top: 8px;
+    }
+
+    .players {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .player {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .player.active { outline: 2px solid var(--accent); }
+    .player .name { font-weight: 800; }
+    .player .meta { color: var(--muted); font-size: 13px; }
+
+    .table {
+      min-height: 280px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .status {
+      background: rgba(2,6,23,.65);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .last-play {
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 112px;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .card {
+      width: 54px;
+      height: 76px;
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--cardText);
+      border: 2px solid #cbd5e1;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(0,0,0,.24);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card.red { color: var(--red); }
+    .card.selected {
+      transform: translateY(-16px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 26px rgba(34,197,94,.35);
+    }
+
+    .card.small {
+      width: 44px;
+      height: 62px;
+      font-size: 14px;
+      cursor: default;
+      transform: none;
+    }
+
+    .card.back {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-color: #93c5fd;
+      color: white;
+    }
+
+    .hand-wrap {
+      margin-top: 12px;
+      background: rgba(2,6,23,.5);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .controls { grid-template-columns: 1fr; }
+      .card { width: 46px; height: 66px; font-size: 14px; }
+    }
+
+    .log {
+      height: 220px;
+      overflow: auto;
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      background: #020617;
+      border-radius: 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .hidden { display: none !important; }
+    .note { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .ok { color: #86efac; }
+    .bad { color: #fca5a5; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="audit-banner">BẢN KIỂM TRA LẦN 2 - Thêm STUN, kiểm tra ICE/WebRTC và log lỗi DataConnection không mở</div>
+    <div class="status" style="margin-bottom:12px">
+      <b>Lưu ý quyền/kết nối:</b> Game này không cần cho phép camera hay micro. Nhưng trình duyệt/mạng phải cho phép <b>JavaScript</b>, <b>WebRTC/DataChannel</b>, tải thư viện từ <b>cdnjs.cloudflare.com</b> và kết nối tới <b>PeerJS PeerServer</b>. Nếu dùng VPN, chặn quảng cáo, trình duyệt riêng tư, mạng trường học/công ty hoặc iPhone bật Lockdown Mode thì có thể không vào phòng được.
+    </div>
+
+    <header>
+      <div>
+        <h1>Tiến Lên Online</h1>
+        <div class="pill">GitHub Pages + PeerJS + mã phòng</div>
+      </div>
+      <div class="pill mono" id="netStatus">Chưa kết nối</div>
+    </header>
+
+    <div class="grid">
+      <aside class="panel">
+        <h2>Phòng chơi</h2>
+        <label>Tên của bạn</label>
+        <input id="nameInput" maxlength="18" placeholder="Ví dụ: Hải" />
+
+        <div class="btn-row">
+          <button id="createBtn">Tạo phòng</button>
+          <button class="secondary" id="joinBtn">Vào phòng</button>
+        </div>
+
+        <label>Mã phòng</label>
+        <input id="roomInput" maxlength="20" placeholder="Nhập mã phòng" />
+        <div class="room-code hidden" id="roomCodeBox"></div>
+
+        <p class="note">
+          Mã phòng chỉ cần nhập phần 5 ký tự, ví dụ <b>ABCDE</b>. Nếu lỡ nhập <b>tl-ABCDE</b>, game sẽ tự sửa lại. Chủ phòng phải giữ tab mở.
+        </p>
+
+        <div class="btn-row">
+          <button class="warn" id="startBtn" disabled>Bắt đầu</button>
+          <button class="danger" id="resetBtn" disabled>Ván mới</button>
+        </div>
+
+        <div class="btn-row">
+          <button class="secondary" id="copyBtn" disabled>Copy mã</button>
+          <button class="warn" id="testBtn">Test PeerJS</button>
+        </div>
+
+        <h2 style="margin-top:18px">Người chơi</h2>
+        <div class="players" id="playersBox"></div>
+      </aside>
+
+      <main class="panel table">
+        <div class="status" id="statusBox">Tạo phòng hoặc vào phòng để bắt đầu.</div>
+
+        <section class="last-play">
+          <h2>Bài vừa đánh</h2>
+          <div id="lastPlayInfo" class="note">Chưa có lượt đánh.</div>
+          <div class="cards" id="lastCards"></div>
+        </section>
+
+        <section class="hand-wrap">
+          <h2>Bài của bạn</h2>
+          <div class="cards" id="handBox"></div>
+          <div class="controls">
+            <button id="playBtn" disabled>Đánh bài</button>
+            <button class="secondary" id="passBtn" disabled>Bỏ lượt</button>
+            <button class="warn" id="sortBtn">Sắp xếp</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Nhật ký kiểm tra</h2>
+          <div class="log" id="logBox"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const SUITS = ["♠", "♣", "♦", "♥"];
+    const RANKS = ["3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", "2"];
+    const SUIT_POWER = { "♠": 0, "♣": 1, "♦": 2, "♥": 3 };
+    const VERSION = "Bản kiểm tra lần 2";
+    const PEER_OPTIONS = {
+      debug: 2,
+      secure: true,
+      host: "0.peerjs.com",
+      port: 443,
+      path: "/",
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" }
+        ]
+      }
+    };
+
+    let peer = null;
+    let isHost = false;
+    let roomCode = "";
+    let myId = "";
+    let myName = "";
+    let selected = new Set();
+    let connections = new Map();
+    let netText = "Chưa kết nối";
+    let joinRetryTimer = null;
+    let joinTimeoutTimer = null;
+
+    let state = freshState();
+
+    function freshState() {
+      return {
+        phase: "lobby",
+        hostId: "",
+        players: [],
+        hands: {},
+        turn: 0,
+        lastPlay: null,
+        passes: [],
+        winnerIds: [],
+        log: []
+      };
+    }
+
+    function cleanRoomCode(code) {
+      return String(code || "")
+        .trim()
+        .toUpperCase()
+        .replace(/^TL-/, "")
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 8);
+    }
+
+    function roomId(code) {
+      return "tl-" + cleanRoomCode(code).toLowerCase();
+    }
+
+    function setNetStatus(text) {
+      netText = text;
+      $("netStatus").textContent = text;
+    }
+
+    function makeRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      for (let i = 0; i < 5; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    }
+
+    function timeNow() {
+      return new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function addLog(msg) {
+      state.log.unshift(`[${timeNow()}] ${msg}`);
+      state.log = state.log.slice(0, 120);
+    }
+
+    function logLocal(msg) {
+      addLog(msg);
+      render();
+    }
+
+    function normalizeName() {
+      return ($("nameInput").value || "Người chơi").trim().slice(0, 18) || "Người chơi";
+    }
+
+    function stopJoinTimers() {
+      if (joinRetryTimer) clearInterval(joinRetryTimer);
+      if (joinTimeoutTimer) clearTimeout(joinTimeoutTimer);
+      joinRetryTimer = null;
+      joinTimeoutTimer = null;
+    }
+
+    function send(conn, type, payload = {}) {
+      if (!conn || !conn.open) {
+        logLocal(`Không gửi được ${type}: kết nối chưa mở.`);
+        return false;
+      }
+      conn.send({ type, payload, version: VERSION, at: Date.now() });
+      return true;
+    }
+
+    function broadcast(type, payload = {}) {
+      for (const conn of connections.values()) send(conn, type, payload);
+    }
+
+    function stateForPlayer(playerId) {
+      const clone = JSON.parse(JSON.stringify(state));
+      for (const p of clone.players) {
+        if (p.id !== playerId) clone.hands[p.id] = Array(clone.hands[p.id]?.length || 0).fill({ back: true });
+      }
+      return clone;
+    }
+
+    function syncTo(conn, playerId) {
+      send(conn, "state", stateForPlayer(playerId));
+    }
+
+    function syncAllPerPlayer() {
+      if (!isHost) return;
+      for (const [pid, conn] of connections.entries()) syncTo(conn, pid);
+      render();
+    }
+
+    function createDeck() {
+      const deck = [];
+      for (const rank of RANKS) {
+        for (const suit of SUITS) deck.push({ rank, suit, id: rank + suit });
+      }
+      return deck;
+    }
+
+    function cardValue(card) {
+      return RANKS.indexOf(card.rank) * 4 + SUIT_POWER[card.suit];
+    }
+
+    function rankValue(card) {
+      return RANKS.indexOf(card.rank);
+    }
+
+    function sortCards(cards) {
+      return [...cards].sort((a, b) => cardValue(a) - cardValue(b));
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function sameRank(cards) {
+      return cards.every(c => c.rank === cards[0].rank);
+    }
+
+    function isConsecutiveRank(values) {
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] !== values[i - 1] + 1) return false;
+      }
+      return true;
+    }
+
+    function analyze(cards) {
+      cards = sortCards(cards);
+      if (!cards.length) return null;
+      const n = cards.length;
+      const ranks = cards.map(rankValue);
+      const uniqueRanks = [...new Set(ranks)];
+      const high = cards[cards.length - 1];
+      const hasTwo = ranks.includes(RANKS.indexOf("2"));
+
+      if (n === 1) return { type: "single", size: 1, high, power: cardValue(high), name: "đơn" };
+      if (n === 2 && sameRank(cards)) return { type: "pair", size: 2, high, power: cardValue(high), name: "đôi" };
+      if (n === 3 && sameRank(cards)) return { type: "triple", size: 3, high, power: cardValue(high), name: "tam" };
+      if (n === 4 && sameRank(cards)) return { type: "four", size: 4, high, power: rankValue(high), name: "tứ quý" };
+
+      if (n >= 3 && uniqueRanks.length === n && !hasTwo && isConsecutiveRank(ranks)) {
+        return { type: "straight", size: n, high, power: rankValue(high), name: "tiến lên" };
+      }
+
+      if (n % 2 === 0 && n >= 6 && !hasTwo) {
+        const pairs = [];
+        for (let i = 0; i < n; i += 2) {
+          if (cards[i].rank !== cards[i + 1].rank) return null;
+          pairs.push(rankValue(cards[i]));
+        }
+        if (isConsecutiveRank(pairs)) {
+          return { type: "pairStraight", size: n, pairs: n / 2, high, power: rankValue(high), name: `${n / 2} đôi thông` };
+        }
+      }
+      return null;
+    }
+
+    function canBeat(play, last) {
+      if (!last) return true;
+      if (play.type === last.type && play.size === last.size) return play.power > last.power;
+
+      const lastIsSingleTwo = last.type === "single" && last.high.rank === "2";
+      const lastIsPairTwo = last.type === "pair" && last.high.rank === "2";
+
+      // Luật bạn yêu cầu:
+      // Tứ quý chặt đôi heo.
+      // Ba đôi thông trở lên chặt heo đơn và đôi heo.
+      if (play.type === "four" && lastIsPairTwo) return true;
+      if (play.type === "pairStraight" && play.pairs >= 3 && (lastIsSingleTwo || lastIsPairTwo)) return true;
+      return false;
+    }
+
+    function currentPlayer() {
+      return state.players[state.turn];
+    }
+
+    function alivePlayers() {
+      return state.players.filter(p => !state.winnerIds.includes(p.id));
+    }
+
+    function advanceTurn() {
+      const alive = alivePlayers();
+      if (alive.length <= 1) return;
+      for (let i = 1; i <= state.players.length; i++) {
+        const next = (state.turn + i) % state.players.length;
+        const p = state.players[next];
+        if (p && !state.winnerIds.includes(p.id)) {
+          state.turn = next;
+          return;
+        }
+      }
+    }
+
+    function resetRoundIfNeeded() {
+      const alive = alivePlayers();
+      if (!state.lastPlay) return;
+      const activeIds = alive.map(p => p.id);
+      const passedCount = state.passes.filter(id => activeIds.includes(id) && id !== state.lastPlay.playerId).length;
+      if (passedCount >= Math.max(0, alive.length - 1)) {
+        const leadIndex = state.players.findIndex(p => p.id === state.lastPlay.playerId && !state.winnerIds.includes(p.id));
+        state.turn = leadIndex >= 0 ? leadIndex : state.turn;
+        state.lastPlay = null;
+        state.passes = [];
+        addLog("Vòng mới: người thắng lượt trước được đánh bất kỳ.");
+      }
+    }
+
+    function validateDeal() {
+      const counts = state.players.map(p => (state.hands[p.id] || []).length);
+      const ok = counts.every(n => n === 13);
+      addLog(ok ? "Kiểm tra chia bài: OK, mỗi người 13 lá." : "Kiểm tra chia bài: LỖI, số lá = " + counts.join(", "));
+      return ok;
+    }
+
+    function hostStartGame() {
+      if (!isHost) return;
+      if (state.players.length < 2) return alert("Cần ít nhất 2 người chơi.");
+      if (state.players.length > 4) return alert("Tối đa 4 người chơi.");
+
+      state.phase = "playing";
+      state.hands = {};
+      state.lastPlay = null;
+      state.passes = [];
+      state.winnerIds = [];
+
+      const deck = shuffle(createDeck());
+      state.players.forEach(p => state.hands[p.id] = []);
+
+      // Đại kiểm tra: luôn chia 13 lá cho mỗi người. Không chia hết bộ nếu dưới 4 người.
+      for (let round = 0; round < 13; round++) {
+        for (const p of state.players) {
+          const card = deck.shift();
+          if (card) state.hands[p.id].push(card);
+        }
+      }
+
+      for (const p of state.players) state.hands[p.id] = sortCards(state.hands[p.id]);
+      validateDeal();
+
+      let firstId = state.players[0].id;
+      for (const p of state.players) {
+        if (state.hands[p.id].some(c => c.rank === "3" && c.suit === "♠")) firstId = p.id;
+      }
+      state.turn = Math.max(0, state.players.findIndex(p => p.id === firstId));
+      addLog("Bắt đầu ván. Nếu có 3♠ thì người đó đi trước, nếu không thì chủ phòng đi trước.");
+      syncAllPerPlayer();
+    }
+
+    function hostPlay(playerId, cardIds) {
+      if (!isHost || state.phase !== "playing") return;
+      const player = currentPlayer();
+      if (!player || player.id !== playerId) return syncAllPerPlayer();
+
+      const hand = state.hands[playerId] || [];
+      const chosen = hand.filter(c => cardIds.includes(c.id));
+      if (chosen.length !== cardIds.length) return reject(playerId, "Không tìm thấy đủ lá bài đã chọn.");
+
+      const play = analyze(chosen);
+      if (!play) return reject(playerId, "Bộ bài không hợp lệ.");
+      if (!canBeat(play, state.lastPlay)) return reject(playerId, "Bài chưa đủ lớn để đè lượt trước.");
+
+      state.hands[playerId] = hand.filter(c => !cardIds.includes(c.id));
+      state.lastPlay = { ...play, cards: chosen, playerId, playerName: player.name };
+      state.passes = [];
+      addLog(`${player.name} đánh ${play.name}: ${chosen.map(cardLabel).join(" ")}.`);
+
+      if (state.hands[playerId].length === 0 && !state.winnerIds.includes(playerId)) {
+        state.winnerIds.push(playerId);
+        addLog(`${player.name} đã hết bài!`);
+      }
+
+      const alive = alivePlayers();
+      if (alive.length <= 1) {
+        if (alive[0] && !state.winnerIds.includes(alive[0].id)) state.winnerIds.push(alive[0].id);
+        state.phase = "ended";
+        addLog("Ván đấu kết thúc.");
+      } else {
+        advanceTurn();
+      }
+      syncAllPerPlayer();
+    }
+
+    function hostPass(playerId) {
+      if (!isHost || state.phase !== "playing") return;
+      const player = currentPlayer();
+      if (!player || player.id !== playerId) return syncAllPerPlayer();
+      if (!state.lastPlay) return reject(playerId, "Đầu vòng không được bỏ lượt.");
+      if (!state.passes.includes(playerId)) state.passes.push(playerId);
+      addLog(`${player.name} bỏ lượt.`);
+      advanceTurn();
+      resetRoundIfNeeded();
+      syncAllPerPlayer();
+    }
+
+    function reject(playerId, reason) {
+      if (playerId === myId) alert(reason);
+      else send(connections.get(playerId), "reject", { reason });
+    }
+
+    function cardLabel(c) {
+      return c.back ? "🂠" : `${c.rank}${c.suit}`;
+    }
+
+    function watchConnDiagnostics(conn, label) {
+      let last = "";
+      let ticks = 0;
+      const timer = setInterval(() => {
+        ticks++;
+        const pc = conn.peerConnection;
+        if (!pc) {
+          if (ticks === 1) logLocal(`${label}: chưa có RTCPeerConnection.`);
+          if (ticks > 18 || conn.open) clearInterval(timer);
+          return;
+        }
+        const now = `ICE=${pc.iceConnectionState}, gathering=${pc.iceGatheringState}, signaling=${pc.signalingState}, conn=${pc.connectionState || "n/a"}`;
+        if (now !== last) {
+          last = now;
+          logLocal(`${label}: ${now}`);
+        }
+        if (conn.open || ["connected", "completed", "failed", "closed", "disconnected"].includes(pc.iceConnectionState) || ticks > 22) {
+          clearInterval(timer);
+          if (!conn.open && ["failed", "disconnected", "closed"].includes(pc.iceConnectionState)) {
+            logLocal(`${label}: WebRTC không mở được. Mạng này có thể cần TURN server, STUN thôi chưa đủ.`);
+          }
+        }
+      }, 700);
+    }
+
+    function setupConn(conn) {
+      watchConnDiagnostics(conn, isHost ? "Host nhận kết nối" : "Người chơi nối host");
+      conn.on("open", () => {
+        connections.set(conn.peer, conn);
+        setNetStatus(isHost ? `Chủ phòng ${roomCode} - ${connections.size} kết nối` : `Đã nối phòng ${roomCode}`);
+        logLocal(isHost ? `DataConnection mở từ ${conn.peer}.` : `DataConnection mở tới chủ phòng ${conn.peer}.`);
+      });
+
+      conn.on("data", msg => handleMessage(conn, msg));
+
+      conn.on("close", () => {
+        connections.delete(conn.peer);
+        if (isHost) {
+          const p = state.players.find(x => x.id === conn.peer);
+          if (p) addLog(`${p.name} mất kết nối.`);
+          setNetStatus(`Chủ phòng ${roomCode} - ${connections.size} kết nối`);
+          syncAllPerPlayer();
+        } else {
+          setNetStatus("Mất kết nối với chủ phòng");
+          logLocal("Mất kết nối với chủ phòng.");
+        }
+      });
+
+      conn.on("error", err => {
+        console.error("Connection error", err);
+        logLocal("Lỗi DataConnection: " + (err.type || err.message || "unknown"));
+      });
+    }
+
+    function handleMessage(conn, msg) {
+      if (!msg || !msg.type) return;
+      const { type, payload } = msg;
+
+      if (isHost) {
+        if (type === "join") {
+          if (state.phase !== "lobby") return send(conn, "reject", { reason: "Phòng đã bắt đầu ván." });
+          if (state.players.length >= 4) return send(conn, "reject", { reason: "Phòng đã đủ 4 người." });
+
+          const playerName = (payload.name || "Người chơi").slice(0, 18);
+          if (!state.players.some(p => p.id === conn.peer)) {
+            state.players.push({ id: conn.peer, name: playerName });
+            addLog(`${playerName} vào phòng. Peer: ${conn.peer}`);
+          }
+          send(conn, "joinAck", { roomCode, hostId: myId });
+          syncAllPerPlayer();
+        }
+        if (type === "play") hostPlay(conn.peer, payload.cardIds || []);
+        if (type === "pass") hostPass(conn.peer);
+        return;
+      }
+
+      if (type === "joinAck") {
+        stopJoinTimers();
+        setNetStatus(`Đã vào phòng ${roomCode}`);
+        logLocal("Chủ phòng đã xác nhận vào phòng.");
+      }
+
+      if (type === "state") {
+        state = payload;
+        selected.clear();
+        render();
+      }
+
+      if (type === "reject") {
+        stopJoinTimers();
+        alert(payload.reason || "Yêu cầu bị từ chối.");
+      }
+    }
+
+    function render() {
+      $("netStatus").textContent = netText;
+      $("roomCodeBox").classList.toggle("hidden", !roomCode);
+      $("roomCodeBox").textContent = roomCode;
+      $("startBtn").disabled = !(isHost && state.phase === "lobby" && state.players.length >= 2);
+      $("resetBtn").disabled = !isHost;
+      $("copyBtn").disabled = !roomCode;
+
+      const playersBox = $("playersBox");
+      playersBox.innerHTML = "";
+      for (const p of state.players) {
+        const div = document.createElement("div");
+        div.className = "player" + (currentPlayer()?.id === p.id ? " active" : "");
+        const order = state.winnerIds.indexOf(p.id);
+        div.innerHTML = `<div><div class="name">${escapeHtml(p.name)}${p.id === myId ? " (Bạn)" : ""}</div><div class="meta">${order >= 0 ? "Về thứ " + (order + 1) : "Đang chơi"}</div></div><div>${(state.hands[p.id] || []).length} lá</div>`;
+        playersBox.appendChild(div);
+      }
+
+      const active = currentPlayer();
+      const winners = state.winnerIds.map(id => state.players.find(p => p.id === id)?.name).filter(Boolean);
+      $("statusBox").innerHTML = statusText(active, winners);
+
+      const lastCards = $("lastCards");
+      lastCards.innerHTML = "";
+      if (state.lastPlay) {
+        $("lastPlayInfo").textContent = `${state.lastPlay.playerName} vừa đánh ${state.lastPlay.name || "bài"}.`;
+        for (const c of state.lastPlay.cards) lastCards.appendChild(cardEl(c, false, true));
+      } else {
+        $("lastPlayInfo").textContent = state.phase === "playing" ? "Đầu vòng: có thể đánh bất kỳ bộ hợp lệ." : "Chưa có lượt đánh.";
+      }
+
+      const handBox = $("handBox");
+      handBox.innerHTML = "";
+      const myHand = sortCards(state.hands[myId] || []);
+      for (const c of myHand) handBox.appendChild(cardEl(c, true));
+
+      const myTurn = state.phase === "playing" && active?.id === myId;
+      $("playBtn").disabled = !myTurn || selected.size === 0;
+      $("passBtn").disabled = !myTurn || !state.lastPlay;
+
+      $("logBox").innerHTML = state.log.map(x => `<div>${escapeHtml(x)}</div>`).join("");
+    }
+
+    function statusText(active, winners) {
+      const peerInfo = `<span class="mono">Peer của bạn: ${escapeHtml(myId || "chưa có")}</span><br><span class="mono">Host ID cần nối: ${roomCode ? escapeHtml(roomId(roomCode)) : "chưa có"}</span>`;
+      if (state.phase === "lobby") return `Đang chờ người chơi. Chủ phòng bấm <b>Bắt đầu</b> khi đủ người.<br>${peerInfo}`;
+      if (state.phase === "ended") return `<b class="ok">Ván kết thúc.</b><br>Kết quả: ${winners.map(escapeHtml).join(" → ") || "chưa có"}.<br>${peerInfo}`;
+      const turnName = active ? escapeHtml(active.name) : "?";
+      const yourTurn = active?.id === myId ? "<b class='ok'>Đến lượt bạn.</b>" : `Đến lượt <b>${turnName}</b>.`;
+      return `${yourTurn}<br>Luật: đơn, đôi, tiến lên, tam, tứ quý, ba đôi thông. Tứ quý chặt đôi heo; ba đôi thông chặt heo và đôi heo.<br>${peerInfo}`;
+    }
+
+    function cardEl(c, clickable, small = false) {
+      const div = document.createElement("div");
+      div.className = "card" + (c.suit === "♦" || c.suit === "♥" ? " red" : "") + (selected.has(c.id) ? " selected" : "") + (small ? " small" : "") + (c.back ? " back" : "");
+      div.textContent = cardLabel(c);
+      if (clickable && !c.back) {
+        div.onclick = () => {
+          if (selected.has(c.id)) selected.delete(c.id);
+          else selected.add(c.id);
+          render();
+        };
+      }
+      return div;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]/g, s => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[s]));
+    }
+
+    function hostAddSelf() {
+      state = freshState();
+      state.hostId = myId;
+      state.players = [{ id: myId, name: myName }];
+      addLog(`${VERSION}: ${myName} tạo phòng ${roomCode}. Host ID: ${myId}`);
+    }
+
+    function destroyPeer() {
+      stopJoinTimers();
+      connections.clear();
+      if (peer) {
+        try { peer.destroy(); } catch (e) {}
+      }
+      peer = null;
+    }
+
+    $("createBtn").onclick = () => {
+      myName = normalizeName();
+      roomCode = makeRoomCode();
+      myId = roomId(roomCode);
+      isHost = true;
+      selected.clear();
+      destroyPeer();
+      setNetStatus("Đang tạo phòng...");
+      state = freshState();
+      addLog(`${VERSION}: bắt đầu tạo phòng ${roomCode}, Peer ID ${myId}.`);
+
+      peer = new Peer(myId, PEER_OPTIONS);
+
+      peer.on("open", id => {
+        myId = id;
+        hostAddSelf();
+        setNetStatus(`Chủ phòng ${roomCode} đang mở`);
+        render();
+      });
+
+      peer.on("connection", conn => {
+        logLocal(`Có người đang xin nối: ${conn.peer}.`);
+        setupConn(conn);
+      });
+
+      peer.on("disconnected", () => {
+        setNetStatus("Mất kết nối PeerServer, đang nối lại...");
+        logLocal("Peer bị disconnected, thử reconnect.");
+        try { peer.reconnect(); } catch (e) { logLocal("Reconnect lỗi: " + e.message); }
+      });
+
+      peer.on("error", err => {
+        console.error("Host peer error", err);
+        const type = err.type || err.message || "unknown";
+        setNetStatus("Lỗi tạo phòng: " + type);
+        alert("Không tạo được phòng. Lỗi: " + type + ". Nếu là unavailable-id, bấm Tạo phòng lại để lấy mã mới.");
+      });
+    };
+
+    $("joinBtn").onclick = () => {
+      myName = normalizeName();
+      roomCode = cleanRoomCode($("roomInput").value);
+      $("roomInput").value = roomCode;
+      if (!roomCode) return alert("Nhập mã phòng trước.");
+
+      isHost = false;
+      selected.clear();
+      destroyPeer();
+      state = freshState();
+      addLog(`${VERSION}: chuẩn bị vào phòng ${roomCode}. Host ID cần nối: ${roomId(roomCode)}.`);
+      setNetStatus("Đang mở Peer của bạn...");
+
+      peer = new Peer(undefined, PEER_OPTIONS);
+
+      peer.on("open", id => {
+        myId = id;
+        setNetStatus("Đang nối tới " + roomId(roomCode));
+        logLocal(`Peer của bạn đã mở: ${myId}.`);
+
+        const hostId = roomId(roomCode);
+        const conn = peer.connect(hostId, { reliable: true, serialization: "json" });
+        setupConn(conn);
+
+        const sendJoin = () => {
+          if (conn.open) {
+            send(conn, "join", { name: myName });
+            logLocal("Đã gửi yêu cầu vào phòng tới chủ phòng.");
+          } else {
+            logLocal("Đang chờ DataConnection mở để gửi join...");
+          }
+        };
+
+        conn.on("open", sendJoin);
+        joinRetryTimer = setInterval(sendJoin, 1200);
+        joinTimeoutTimer = setTimeout(() => {
+          if (state.players.length === 0) {
+            setNetStatus("Chưa vào được phòng");
+            alert("Chưa vào được phòng. Nếu nhật ký cứ đứng ở 'Đang chờ DataConnection mở', nghĩa là WebRTC chưa đi xuyên được mạng/NAT. Hãy thử cùng Wi-Fi, tắt VPN/adblock, đổi Chrome/Edge, hoặc cần thêm TURN server riêng.");
+          }
+        }, 10000);
+        render();
+      });
+
+      peer.on("disconnected", () => {
+        setNetStatus("Mất kết nối PeerServer, đang nối lại...");
+        logLocal("Peer bị disconnected, thử reconnect.");
+        try { peer.reconnect(); } catch (e) { logLocal("Reconnect lỗi: " + e.message); }
+      });
+
+      peer.on("error", err => {
+        console.error("Join peer error", err);
+        const type = err.type || err.message || "unknown";
+        setNetStatus("Lỗi vào phòng: " + type);
+        if (type === "peer-unavailable") {
+          alert("Không tìm thấy chủ phòng. Host ID đang tìm: " + roomId(roomCode) + ". Chủ phòng cần bấm Tạo phòng và giữ tab mở.");
+        } else {
+          alert("Không kết nối được PeerJS. Lỗi: " + type);
+        }
+      });
+    };
+
+    $("copyBtn").onclick = async () => {
+      if (!roomCode) return;
+      try {
+        await navigator.clipboard.writeText(roomCode);
+        logLocal("Đã copy mã phòng: " + roomCode);
+      } catch (e) {
+        alert("Mã phòng: " + roomCode);
+      }
+    };
+
+    $("testBtn").onclick = () => {
+      const oldPeer = peer;
+      setNetStatus("Đang test PeerJS...");
+      const testPeer = new Peer(undefined, { ...PEER_OPTIONS, debug: 1 });
+      const timer = setTimeout(() => {
+        try { testPeer.destroy(); } catch (e) {}
+        setNetStatus(netText === "Đang test PeerJS..." ? "Test PeerJS quá lâu" : netText);
+        logLocal("Test PeerJS quá 8 giây. Có thể mạng/CDN/PeerServer bị chặn.");
+      }, 8000);
+      testPeer.on("open", id => {
+        clearTimeout(timer);
+        logLocal("Test PeerJS OK. Test Peer ID: " + id);
+        try { testPeer.destroy(); } catch (e) {}
+        setNetStatus(oldPeer ? netText : "Test PeerJS OK");
+      });
+      testPeer.on("error", err => {
+        clearTimeout(timer);
+        logLocal("Test PeerJS lỗi: " + (err.type || err.message || "unknown"));
+        try { testPeer.destroy(); } catch (e) {}
+        setNetStatus("Test PeerJS lỗi");
+      });
+    };
+
+    $("startBtn").onclick = hostStartGame;
+    $("resetBtn").onclick = () => {
+      if (!isHost) return;
+      hostStartGame();
+    };
+
+    $("playBtn").onclick = () => {
+      const ids = [...selected];
+      if (isHost) hostPlay(myId, ids);
+      else {
+        const hostConn = [...connections.values()][0];
+        send(hostConn, "play", { cardIds: ids });
+      }
+      selected.clear();
+      render();
+    };
+
+    $("passBtn").onclick = () => {
+      if (isHost) hostPass(myId);
+      else {
+        const hostConn = [...connections.values()][0];
+        send(hostConn, "pass", {});
+      }
+    };
+
+    $("sortBtn").onclick = () => {
+      if (state.hands[myId]) state.hands[myId] = sortCards(state.hands[myId]);
+      render();
+    };
+
+    addLog(`${VERSION}: trang đã tải xong. Bấm Test PeerJS trước nếu không vào phòng được.`);
+    render();
+  </script>
+</body>
+</html>
     }
 
     @media (max-width: 850px) {
